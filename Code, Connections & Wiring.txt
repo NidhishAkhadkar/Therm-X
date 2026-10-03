@@ -1,0 +1,153 @@
+```cpp
+/*
+====================================================
+THERM-X
+IoT Fire and Gas Leakage Detection System
+====================================================
+
+Components Used:
+1. ESP8266 / NodeMCU
+2. MQ Gas Sensor
+3. Flame Sensor
+4. Buzzer
+5. LED
+6. LCD Display (Optional)
+7. WiFi Module (built into ESP8266)
+
+====================================================
+*/
+
+// Libraries
+#include <ESP8266WiFi.h>
+
+// WiFi Credentials
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+// Pin Definitions
+#define GAS_SENSOR A0
+#define FLAME_SENSOR D5
+#define BUZZER D6
+#define LED D7
+
+// Threshold Values
+int gasThreshold = 400;
+
+void setup()
+{
+    Serial.begin(115200);
+
+    // Pin Modes
+    pinMode(FLAME_SENSOR, INPUT);
+    pinMode(BUZZER, OUTPUT);
+    pinMode(LED, OUTPUT);
+
+    digitalWrite(BUZZER, LOW);
+    digitalWrite(LED, LOW);
+
+    // WiFi Connection
+    WiFi.begin(ssid, password);
+
+    Serial.println("Connecting to WiFi");
+
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+
+    Serial.println("");
+    Serial.println("WiFi Connected");
+    Serial.println(WiFi.localIP());
+}
+
+void loop()
+{
+    // Read Sensor Values
+    int gasValue = analogRead(GAS_SENSOR);
+    int flameValue = digitalRead(FLAME_SENSOR);
+
+    Serial.print("Gas Value: ");
+    Serial.println(gasValue);
+
+    Serial.print("Flame Value: ");
+    Serial.println(flameValue);
+
+    // Fire or Gas Detection
+    if (gasValue > gasThreshold || flameValue == LOW)
+    {
+        // Turn ON Alarm
+        digitalWrite(BUZZER, HIGH);
+        digitalWrite(LED, HIGH);
+
+        Serial.println("WARNING!");
+        Serial.println("Fire or Gas Leakage Detected!");
+
+        // Simulated IoT Alert
+        Serial.println("Sending Alert through WiFi...");
+
+        delay(1000);
+    }
+    else
+    {
+        // Safe Condition
+        digitalWrite(BUZZER, LOW);
+        digitalWrite(LED, LOW);
+
+        Serial.println("Environment Safe");
+
+        delay(1000);
+    }
+}
+```
+
+## Connections
+
+### MQ Gas Sensor
+
+* VCC → 3.3V
+* GND → GND
+* A0 → A0
+
+### Flame Sensor
+
+* VCC → 3.3V
+* GND → GND
+* DO → D5
+
+### Buzzer
+
+* Positive → D6
+* Negative → GND
+
+### LED
+
+* Positive → D7
+* Negative → GND (through resistor)
+
+### ESP8266 / NodeMCU
+
+* Connect through USB for power and programming.
+
+---
+
+## Software Required
+
+* Arduino IDE
+* ESP8266 Board Package
+* USB Drivers for NodeMCU
+
+---
+
+## Steps to Upload the Code
+
+1. Open Arduino IDE.
+2. Install ESP8266 Board Manager.
+3. Select:
+
+   * Board → NodeMCU 1.0
+4. Paste the code.
+5. Enter your WiFi name and password.
+6. Connect NodeMCU using USB.
+7. Click Upload.
+8. Open Serial Monitor to see readings.
